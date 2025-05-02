@@ -1,0 +1,46 @@
+version: "3"
+services:
+
+  nodered:
+    container_name: Node-Red
+    image: nodered/node-red:latest
+    restart: always
+    ports:
+      - 1880:1880
+    volumes:
+      - /home/bizsync/Servicios/Node-Red:/data
+      - /home/bizsync/Servicios/Node-Red/static:/data/static
+
+  mosquitto:
+    container_name: Mosquitto
+    image: eclipse-mosquitto:latest
+    restart: always
+    ports:
+      - 1883:1883
+      - 9001:9001
+    volumes:
+      - /home/bizsync/Servicios/Mosquitto/config:/mosquitto/config
+      - /home/bizsync/Servicios/Mosquitto/data:/mosquitto/data
+      - /home/bizsync/Servicios/Mosquitto/log:/mosquitto/log
+
+  app:
+    image: 'jc21/nginx-proxy-manager:latest'
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '81:81'
+      - '443:443'
+    volumes:
+      - /home/bizsync/Servicios/NginxProxyManager/data:/data
+      - /home/bizsync/Servicios/NginxProxyManager/letsencrypt:/etc/letsencrypt
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: always
+    ports:
+      -"8000:8000"
+      -"9443:9443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+
